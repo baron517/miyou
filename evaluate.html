@@ -26,9 +26,18 @@
         .link-col{padding:0 15px;}
         .link-col a{color:#52759C;}
         .calendar{padding:0.3rem 0 0.1rem 15px;box-sizing: border-box;}
-        .calendar .tip{padding:0.1rem 15px 0.2rem 0;font-size:0.13rem;color:#888;}
+        .calendar .tip{padding:0.4rem 15px 0.2rem 0;font-size:0.13rem;color:#888;}
         .calendar h1{color:#333;font-size:0.24rem;font-weight: bold;}
-        .calendar-col{overflow: auto;width:100%;}
+        .calendar-col{overflow: auto;width:100%;white-space: nowrap;}
+        .calendar-detail{color:#333;font-size:0.13rem;width:2.2rem;display: inline-block;padding-right:0.1rem;box-sizing: border-box;}
+        .calendar-detail .top-col{margin-left:-0.08rem;}
+        .calendar-detail .top-col div{float:left;width:0.3rem;text-align: center;line-height: 0.3rem;font-size:0.13rem;}
+        .calendar-detail .top-col div.disabled{color:#888;}
+        .calendar-detail-list{padding:0.08rem 0 0.1rem 0;margin-left:-0.08rem;}
+        .calendar-detail-list div{float:left;width:0.3rem;line-height: 0.4rem;text-align: center;font-size:0.13rem;}
+        .calendar-detail-list div.now{color:red;}
+        .calendar-detail-list div.disabled{color:#888;}
+        .calendar-detail .top-text{padding:0.15rem 0 0.12rem 0;}
     </style>
 
 
@@ -97,11 +106,10 @@
 
     <div class="calendar">
         <h1>找我预定</h1>
-        <div class="calendar-col">
+        <div class="calendar-col clearfix">
 
-            <div class="calendar-detail">
 
-            </div>
+
 
         </div>
 
@@ -110,6 +118,88 @@
 
     <script src="assets/lib/jquery.js"></script>
     <script src="assets/lib/moment.js"></script>
+
+    <script>
+
+        function getCountDays(dateObj) {
+            var curDate = dateObj;
+            /* 获取当前月份 */
+            var curMonth = curDate.getMonth();
+            /*  生成实际的月份: 由于curMonth会比实际月份小1, 故需加1 */
+            curDate.setMonth(curMonth + 1);
+            /* 将日期设置为0, 这里为什么要这样设置, 我不知道原因, 这是从网上学来的 */
+            curDate.setDate(0);
+            /* 返回当月的天数 */
+            return curDate.getDate();
+        }
+
+        var dateNow=moment().format('YYYY-MM-DD');
+
+        for(var j=0;j<3;j++)
+        {
+            var html="";
+
+            var dateStr=moment().add(j, 'months').format('YYYY年MM月');
+
+            for(var i=1;i<=getCountDays(moment().add(j, 'months')._d);i++)
+            {
+                var dateStrF=moment().add(j, 'months').format('YYYY-MM');
+                var f=i;
+                if(f<10)
+                {
+                    f="0"+f;
+                }
+                dateStrF=dateStrF+"-"+f;
+
+                var mDate=moment(dateStrF,'YYYY-MM-DD HH:mm:ss');
+               /* console.log(dateStrF);
+             console.log(mDate.format("d"));*/
+
+                if(i==1)
+                {
+                    for(var k=0;k<mDate.format("d");k++)
+                    {
+                        html=html+"<div>&nbsp;</div>";
+                    }
+                }
+
+                if(dateStrF==dateNow)
+                {
+                    html=html+"<div class='now'>今天</div>";
+                }
+                else if(dateStrF<dateNow)
+                {
+                    html=html+"<div class='disabled'>"+i+"</div>";
+                }
+                else
+                {
+                    html=html+"<div>"+i+"</div>";
+                }
+
+
+
+
+            }
+
+            $(".calendar-col").append(' <div class="calendar-detail">' +
+                    '<div class="top-text">'+dateStr+'</div>' +
+                    '<div class="top-col clearfix">' +
+                    '<div class="disabled">日</div>' +
+                    '<div>一</div>' +
+                    '<div>二</div>' +
+                    '<div>三</div>' +
+                    '<div>四</div>' +
+                    '<div>五</div>' +
+                    '<div>六</div>' +
+                    '</div> ' +
+                    '<div class="calendar-detail-list clearfix">' +html+
+                    '</div>' +
+                    '</div>');
+        }
+
+
+
+    </script>
 
 <script>
 
